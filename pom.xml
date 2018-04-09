@@ -31,6 +31,21 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>sample-spring-boot</artifactId>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <properties>
+        <aukletapm.version>1.6.0-SNAPSHOT</aukletapm.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -40,17 +55,7 @@
         <dependency>
             <groupId>com.aukletapm.go</groupId>
             <artifactId>go-servlet</artifactId>
-            <version>1.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.aukletapm.go</groupId>
-            <artifactId>go-metrics</artifactId>
-            <version>1.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <version>1.8.9</version>
+            <version>${aukletapm.version}</version>
         </dependency>
     </dependencies>
 

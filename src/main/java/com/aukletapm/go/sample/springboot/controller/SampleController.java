@@ -20,41 +20,95 @@
 
 package com.aukletapm.go.sample.springboot.controller;
 
-import com.aukletapm.go.servlet.AukletGoHttpServletHandler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.*;
-import org.springframework.boot.autoconfigure.*;
-import org.springframework.stereotype.*;
-import org.springframework.web.bind.annotation.*;
+import com.aukletapm.go.AukletApmToGo;
+import com.aukletapm.go.LineChart;
+import com.aukletapm.go.module.JvmModule;
+import com.aukletapm.go.module.OsModule;
+import com.aukletapm.go.servlet.AukletApmToGoHttpServletHandler;
+import com.google.common.collect.Lists;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Random;
 
 /**
  * @author Eric Xu
  * @date 01/03/2018
  */
 @Controller
-@EnableAutoConfiguration
 public class SampleController {
 
-    private AukletGoHttpServletHandler aukletGoHttpServletHandler;
+    private AukletApmToGoHttpServletHandler aukletApmToGoHttpServletHandler;
 
-    @Autowired
-    public SampleController(AukletGoHttpServletHandler aukletGoHttpServletHandler) {
-        this.aukletGoHttpServletHandler = aukletGoHttpServletHandler;
+    @PostConstruct
+    public void init() {
+        aukletApmToGoHttpServletHandler = AukletApmToGoHttpServletHandler.newBuilder()
+                .name("My Site")
+                .addModule(new OsModule())
+                .addModule(new JvmModule())
+                .build();
+
+
+        aukletApmToGoHttpServletHandler
+                .getService()
+                .indexPage()
+
+                //create a customized line chart
+                .startLineChart("line_chart")
+                .description("Line Chart Sample")
+                .loadData(() -> {
+                    Random random = new Random();
+                    return Lists.newArrayList(
+                            new LineChart.LoadData("Line1", random.nextDouble()),
+                            new LineChart.LoadData("Line2", random.nextDouble()),
+                            new LineChart.LoadData("Line3", random.nextDouble())
+                    );
+                })
+                .endLineChart()
+
+                //create a customized line chart
+                .startPieChart("pie_chart", "Pie Chart Sample")
+                .setContentLoader(o -> {
+                    Random random = new Random();
+                    return new AukletApmToGo.PieChartData.Builder()
+                            .data("2017", "Java", random.nextDouble())
+                            .data("2017", "Kotlin", random.nextDouble())
+                            .data("2017", "Ruby", random.nextDouble())
+                            .data("2017", "Javascript", random.nextDouble())
+                            .data("2018", "Java", random.nextDouble())
+                            .data("2018", "Kotlin", random.nextDouble())
+                            .data("2018", "Ruby", random.nextDouble())
+                            .data("2018", "Javascript", random.nextDouble())
+                            .build();
+                })
+                .endPieChart()
+
+                //create a customized data list
+                .startList("list_sample", "Data List Sample")
+                .setContentLoader(o -> Lists.newArrayList(
+                        new AukletApmToGo.KeyValue("Name", "AukletAPM To Go"),
+                        new AukletApmToGo.KeyValue("Platform", "Android"),
+                        new AukletApmToGo.KeyValue("Price", "Free")
+                ))
+
+                .endList();
+
+
     }
 
-    @CrossOrigin(origins = {"http://localhost:8080", "http://localhost:8100", "http://alert.go.aukletapm.com"})
-    @RequestMapping("/auklet-go")
-    public String akuletGoEndpoint(HttpServletRequest request, HttpServletResponse response) {
-        aukletGoHttpServletHandler.handle(request, response);
-        return null;
+    @CrossOrigin(origins = {"*"})
+    @RequestMapping("/aukletapm-to-go")
+    public void akuletGoEndpoint(HttpServletRequest request, HttpServletResponse response) {
+        aukletApmToGoHttpServletHandler.handle(request, response);
     }
 
     @RequestMapping("/")
     public String home() {
-        return "redirect:/auklet-go";
+        return "redirect:/aukletapm-to-go";
     }
 
 }
