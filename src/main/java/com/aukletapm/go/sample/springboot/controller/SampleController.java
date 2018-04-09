@@ -70,7 +70,7 @@ public class SampleController {
                 })
                 .endLineChart()
 
-                //create a customized line chart
+                //create a customized pie chart
                 .startPieChart("pie_chart", "Pie Chart Sample")
                 .setContentLoader(o -> {
                     Random random = new Random();

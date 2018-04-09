@@ -44,7 +44,7 @@
         </plugins>
     </build>
     <properties>
-        <aukletapm.version>1.6.0-SNAPSHOT</aukletapm.version>
+        <aukletapm.version>1.6.0</aukletapm.version>
     </properties>
 
     <dependencies>
